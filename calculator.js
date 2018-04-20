@@ -13,105 +13,94 @@ var new_operator = null;
 var isLastinputNumber = false;
 var high_precedence = false;
 var samelevel = null;
-var checkhighprecedence = null;
+var lowPrecedence = null;
+var setdecimal = false;
+var number = null;
 
-
-function init()
-{
-
-}
 
 for(var i=0; i < digits.length; i++)
 {
-    digits[i].addEventListener('click',storenumber);
+    digits[i].addEventListener('click',storeNumber);
 }
 
 for(var i=0;i< operator.length; i++)
 {
-    operator[i].addEventListener('click',checkprecedence)
+    operator[i].addEventListener('click',operatorPerform);
+}
+
+decimal.addEventListener('click',addDecimal);
+evaluate.addEventListener('click',evaluateExpression);
+
+clear.addEventListener('click',initialize);
+
+function initialize()
+{
+    var old_value = null;
+    var new_value = null;
+    var old_operator = null;
+    var new_operator = null;
+    var isLastinputNumber = false;
+    var high_precedence = false;
+    var samelevel = null;
+    var lowPrecedence = null;
+    var setdecimal = false;
+    var number = null;
+    result.innerHTML = 0;
 }
 
 
-function storenumber()
+function storeNumber()
 {  
-    // 
-    
     if(isLastinputNumber) 
     {
         number = number.concat(this.value);
     }    
     else
-    {  
+    { 
         number = this.value;
     }
+    // if(number && number != '0')
+    // {
+        isLastinputNumber = true;
+    // }
     result.innerHTML =  number;
-    isLastinputNumber = true;
 
 }
 
-function checkprecedence()
+function operatorPerform()
 {
-    if(new_operator)
+    if(isLastinputNumber)
     {
-        if(high_precedence)
+        if(new_operator)
         {
-            // if(new_operator == '*')
-            new_value = calculate(new_operator,new_value,number);
-            // new_value = number *  new_value;
-            // else if(new_operator == '/')
-            // new_value = new_value / number;
-
-            samelevel = checkforsamepredencelevel(old_operator,this.value);
-            if(samelevel)
-            {
-                old_value = calculate(this.value,old_value,new_value);
-                // old_value = Number(old_value) + Number(new_value);
-                old_operator = this.value;
-                result.innerHTML = old_value;
-                new_operator = null;
-                new_value = null;
-            }
-            else
-            {
-                new_operator = this.value;
-                result.innerHTML = new_value;
-            }   
-            samelevel = null; 
+            onNewOperator(this.value);
         }
-    }
-    else if(old_operator)
-    {
-        new_operator = this.value;
-        new_value = number;
-        checkhighprecedence = checkiflowpredence(old_operator,new_operator);
-            if (!checkhighprecedence)
-            {
-                high_precedence = true;
-            }
-            else
-            {
-                high_precedence = false;
-                old_value = calculate(old_operator,old_value,new_value);
-                old_operator = new_operator;
-                new_operator = null;
-                new_value = null;
-                result.innerHTML = old_value;
-            }
-        checkhighprecedence = null;
-    }
-    else
-    {
-        if(old_value == null)
+        else if(old_operator)
         {
-            old_value = number;
+            onOldOperator(this.value);
         }
         else
         {
-            new_value = number; 
+            if(old_value == null)
+                old_value = number;
+            // else
+            //     new_value = number; 
+            old_operator = this.value;
         }
-        old_operator = this.value;
+        isLastinputNumber = false;  
+        setdecimal = false;  
     }
-    isLastinputNumber = false;    
+    else
+    {
+        if(new_operator)
+        {
+            new_operator = this.value;
+        }
+        else if(old_operator)
+        {
+            old_operator = this.value;
+        }
+    }
 }
 
 
@@ -136,7 +125,7 @@ function calculate(operator,num1,num2)
     }
 }
 
-function checkforsamepredencelevel(first_operator, second_operator)
+function checkIfSameLevel(first_operator, second_operator)
 {
     if(operations[first_operator] == operations[second_operator])
      return true;
@@ -144,12 +133,97 @@ function checkforsamepredencelevel(first_operator, second_operator)
      return false;
 }
 
-function checkiflowpredence(first_operator,second_operator)
+function checkIfLowPredence(first_operator,second_operator)
 {
     if(operations[first_operator] >= operations[second_operator])
         return true;
     else
         return false;
+}
+
+
+function addDecimal()
+{
+    if(!setdecimal)
+    {
+        if(isLastinputNumber)
+        {
+            number = number.concat(this.value);
+        }
+        else
+        {
+            number = '0'.concat(this.value);
+        }
+        isLastinputNumber= true;
+        setdecimal = true;
+        result.innerHTML =  number;
+    }
+}
+
+
+function evaluateExpression()
+{
+    if(old_value != null)
+    {
+        if(new_operator)
+        {
+            output = calculate(new_operator,new_value,number);
+            output = calculate(old_operator,old_value,output);
+            old_operator = new_operator;
+        }
+        else 
+        {
+            output = calculate(old_operator,old_value,number);
+        }
+        new_operator = null;
+        old_value = output;
+        result.innerHTML =  output;
+      
+    }
+}
+
+function onNewOperator(value)
+{
+    if(high_precedence)
+    {
+        new_value = calculate(new_operator,new_value,number);
+        samelevel = checkIfSameLevel(old_operator,value);
+        if(samelevel)
+        {
+            old_value = calculate(value,old_value,new_value);
+            old_operator = value;
+            result.innerHTML = old_value;
+            new_operator = null;
+            new_value = null;
+        }
+        else
+        {
+            new_operator = value;
+            result.innerHTML = new_value;
+        }   
+        samelevel = null; 
+    }
+}
+
+function onOldOperator(value)
+{
+    new_operator = value;
+    new_value = number;
+    lowPrecedence = checkIfLowPredence(old_operator,new_operator);
+    if (!lowPrecedence)
+    {   
+        high_precedence = true;
+    }
+    else
+    {
+        high_precedence = false;
+        old_value = calculate(old_operator,old_value,new_value);
+        old_operator = new_operator;
+        new_operator = null;
+        new_value = null;
+        result.innerHTML = old_value;
+    }
+    lowPrecedence = null;
 }
 /*
 if(this.value == '*')
