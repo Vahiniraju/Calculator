@@ -82,8 +82,7 @@ function operatorPerform()
         {
             if(old_value == null)
                 old_value = number;
-            // else
-            //     new_value = number; 
+
             old_operator = this.value;
         }
         isLastinputNumber = false;  
@@ -109,17 +108,20 @@ function calculate(operator,num1,num2)
     switch(operator)
     {
         case '+': 
+            
             return Number(num1) + Number(num2);
             break;
         case '-':
-            return Number(num1) - Number(num2);
+            var scale1 = Math.floor(num1) == num1 ? 0 : num1.split('.')[1].length
+            var scale2 = Math.floor(num2) == num2 ? 0 : num2.split('.')[1].length 
+            return (Number(num1) - Number(num2)).toFixed(Math.max(scale1, scale2));
             break;
         case '*':
             return Number(num1) * Number(num2);
             break;
         case '/':
             if(Number(num2) != 0)
-            return Number(num1) / Number(num2);
+            return  parseFloat(Number(num1) / Number(num2)).toFixed(8) ;
             else
             {
             initialize();
@@ -161,7 +163,6 @@ function addDecimal()
         }
         isLastinputNumber= true;
         setdecimal = true;
-        // displayResult(number)
         result.innerHTML =  number;
     }
 }
@@ -184,7 +185,6 @@ function evaluateExpression()
         new_operator = null;
         old_value = output;
         displayResult(output);
-        // result.innerHTML =  output;
       
     }
 }
@@ -200,7 +200,6 @@ function onNewOperator(value)
             old_value = calculate(value,old_value,new_value);
             old_operator = value;
             displayResult(old_value);
-            // result.innerHTML = old_value;
             new_operator = null;
             new_value = null;
         }
@@ -208,7 +207,6 @@ function onNewOperator(value)
         {
             new_operator = value;
             displayResult(new_value);
-            // result.innerHTML = new_value;
         }   
         samelevel = null; 
     }
@@ -231,24 +229,22 @@ function onOldOperator(value)
         new_operator = null;
         new_value = null;
         displayResult(old_value);
-        // result.innerHTML = old_value;
     }
     lowPrecedence = null;
 }
 
 function displayResult(value)
 {   
-    value = parseFloat(value);
-    if(value % 1 !== 0)
-    value = value.toFixed(4);
+    value = parseFloat(value)//.toFixed(4).replace(/\.0+$/,'');
+    // if(value % 1 !== 0)
+    var maximum_allowed_digits = value > 0 ? 10 : 11
     value = String(value)
-    if(value.length <= 10)
+    if(value.length <= maximum_allowed_digits)
         result.innerHTML = Number.parseFloat(value);
     else
     {
+        //alert(value); 
         initialize()
         result.innerHTML = "Error";
-    }
-
-    
+    } 
 }
