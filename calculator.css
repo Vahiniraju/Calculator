@@ -7,16 +7,44 @@
 	border: 1px solid black;
 	margin: auto;
     margin-top: 100px;
+    border-radius: 50px 50px 50px 50px;
+}
+
+#inner
+{
+    height: 120px;
+    background-color: grey;
+    color: white;
+    font-size: 2em;
+    text-align: right;
+    line-height: 5.3em;
+    border-radius:  50px 50px 0 0;
+    font-family: system-ui;
+    margin-bottom: 20px;
+    background-color: rgb(185, 182, 182);
+    color:rgb(80, 79, 79);
 }
 
 #result
 {
     height: 100px;
-    background-color: grey;
-    color: white;
-    font-size: 2em;
+    padding: 0 10px;
+    overflow: hidden;
 }
 
+/* input
+{
+    width: 94.5%;
+    height: 100px;
+    padding: 0 10px;
+    overflow: hidden;
+    border-radius:  50px 50px 0 0;
+    background-color: grey;
+    color: white;
+    outline: none;
+    border: 1px solid grey;
+
+} */
 
 .row 
 {

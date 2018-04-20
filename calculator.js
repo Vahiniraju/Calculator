@@ -35,16 +35,16 @@ clear.addEventListener('click',initialize);
 
 function initialize()
 {
-    var old_value = null;
-    var new_value = null;
-    var old_operator = null;
-    var new_operator = null;
-    var isLastinputNumber = false;
-    var high_precedence = false;
-    var samelevel = null;
-    var lowPrecedence = null;
-    var setdecimal = false;
-    var number = null;
+     old_value = null;
+    new_value = null;
+    old_operator = null;
+    new_operator = null;
+    isLastinputNumber = false;
+    high_precedence = false;
+    samelevel = null;
+    lowPrecedence = null;
+    setdecimal = false;
+    number = null;
     result.innerHTML = 0;
 }
 
@@ -59,12 +59,11 @@ function storeNumber()
     { 
         number = this.value;
     }
-    // if(number && number != '0')
-    // {
+    if(number && number != '0') // To not displays if pressed zereos continously.
+    {
         isLastinputNumber = true;
-    // }
-    result.innerHTML =  number;
-
+    }
+    displayResult(number);
 }
 
 function operatorPerform()
@@ -121,6 +120,12 @@ function calculate(operator,num1,num2)
         case '/':
             if(Number(num2) != 0)
             return Number(num1) / Number(num2);
+            else
+            {
+            initialize();
+            result.innerHTML = "undefined";
+            next;
+            }
             break;    
     }
 }
@@ -156,6 +161,7 @@ function addDecimal()
         }
         isLastinputNumber= true;
         setdecimal = true;
+        // displayResult(number)
         result.innerHTML =  number;
     }
 }
@@ -169,7 +175,7 @@ function evaluateExpression()
         {
             output = calculate(new_operator,new_value,number);
             output = calculate(old_operator,old_value,output);
-            old_operator = new_operator;
+            old_operator = new_operator
         }
         else 
         {
@@ -177,7 +183,8 @@ function evaluateExpression()
         }
         new_operator = null;
         old_value = output;
-        result.innerHTML =  output;
+        displayResult(output);
+        // result.innerHTML =  output;
       
     }
 }
@@ -192,14 +199,16 @@ function onNewOperator(value)
         {
             old_value = calculate(value,old_value,new_value);
             old_operator = value;
-            result.innerHTML = old_value;
+            displayResult(old_value);
+            // result.innerHTML = old_value;
             new_operator = null;
             new_value = null;
         }
         else
         {
             new_operator = value;
-            result.innerHTML = new_value;
+            displayResult(new_value);
+            // result.innerHTML = new_value;
         }   
         samelevel = null; 
     }
@@ -221,19 +230,25 @@ function onOldOperator(value)
         old_operator = new_operator;
         new_operator = null;
         new_value = null;
-        result.innerHTML = old_value;
+        displayResult(old_value);
+        // result.innerHTML = old_value;
     }
     lowPrecedence = null;
 }
-/*
-if(this.value == '*')
-       {
-           old_value = old_value.to_i * new_value.to_i;
-         result.innerHTML =  old_value;
-       } 
-       else if(this.value == '/')
-       {
-           old_value = old_value.to_i * new_value.to_i
-           result.innerHTML =  old_value;
-       }
-       else{*/
+
+function displayResult(value)
+{   
+    value = parseFloat(value);
+    if(value % 1 !== 0)
+    value = value.toFixed(4);
+    value = String(value)
+    if(value.length <= 10)
+        result.innerHTML = Number.parseFloat(value);
+    else
+    {
+        initialize()
+        result.innerHTML = "Error";
+    }
+
+    
+}
