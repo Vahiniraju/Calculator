@@ -15,6 +15,7 @@ var high_precedence = false;
 var samelevel = null;
 var lowPrecedence = null;
 var setdecimal = false;
+var experssionEvaluated = false;
 var number = null;
 
 
@@ -59,7 +60,7 @@ function storeNumber()
     { 
         number = this.value;
     }
-    if(number && number != '0') // To not displays if pressed zereos continously.
+    if(number && number != '0') // To not displays if pressed zeroes continously.
     {
         isLastinputNumber = true;
     }
@@ -68,6 +69,11 @@ function storeNumber()
 
 function operatorPerform()
 {
+    if(experssionEvaluated)
+    {
+    old_operator = null;
+    experssionEvaluated = false;
+    }
     if(isLastinputNumber)
     {
         if(new_operator)
@@ -170,6 +176,7 @@ function addDecimal()
 
 function evaluateExpression()
 {
+    experssionEvaluated = true;
     if(old_value != null)
     {
         if(new_operator)
@@ -243,7 +250,7 @@ function displayResult(value)
         result.innerHTML = Number.parseFloat(value);
     else
     {
-        //alert(value); 
+        // alert(value); 
         initialize()
         result.innerHTML = "Error";
     } 
