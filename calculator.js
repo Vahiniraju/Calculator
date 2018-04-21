@@ -110,9 +110,6 @@ function operatorPerform()
 
 function calculate(operator,num1,num2)
 {
-    //computing scale of values to be calculated
-    var scale1 = Math.floor(num1) == num1 ? 0 : num1.split('.')[1].length
-    var scale2 = Math.floor(num2) == num2 ? 0 : num2.split('.')[1].length 
     var computedValue;
     switch(operator)
     {
@@ -129,9 +126,7 @@ function calculate(operator,num1,num2)
         case '/':
             if(Number(num2) != 0)
             {
-                computedValue = Number(num1) / Number(num2); //1000000.2345
-                var number_of_digits = String(computedValue).split('.')[0].length
-                return (Number(num1) / Number(num2)).toFixed(10-number_of_digits);
+                computedValue = Number(num1) / Number(num2); 
             }
             else
             {
@@ -141,8 +136,8 @@ function calculate(operator,num1,num2)
             }
             break;    
     }
-    //always return calculated value to max scale of two numbers and remove trailing zeroes in case
-    return computedValue.toFixed(Math.max(scale1, scale2)).toString();
+    var number_of_digits = String(computedValue).split('.')[0].length
+    return (number_of_digits > 10 ? computedValue : Number(computedValue.toFixed(10-number_of_digits)))
 
 }
 
