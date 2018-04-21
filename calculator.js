@@ -110,6 +110,7 @@ function operatorPerform()
 
 function calculate(operator,num1,num2)
 {
+    //computing scale of values to be calculated
     var scale1 = Math.floor(num1) == num1 ? 0 : num1.split('.')[1].length
     var scale2 = Math.floor(num2) == num2 ? 0 : num2.split('.')[1].length 
     var computedValue;
@@ -140,6 +141,7 @@ function calculate(operator,num1,num2)
             }
             break;    
     }
+    //always return calculated value to max scale of two numbers and remove trailing zeroes in case
     return computedValue.toFixed(Math.max(scale1, scale2)).toString();
 
 }
@@ -249,6 +251,7 @@ function onOldOperator(value)
 function displayResult(value)
 {   
     value = parseFloat(value)
+    //If negative or decimal digit number maximum digits allowed 10, so total length should be 11
     var maximum_allowed_digits = (value%1 == 0 && value > 0) ?  10 : 11
     value = String(value)
     if(value.length <= maximum_allowed_digits)
