@@ -15,7 +15,7 @@ var high_precedence = false;
 var samelevel = null;
 var lowPrecedence = null;
 var setdecimal = false;
-var experssionEvaluated = false;
+var expressionEvaluated = false;
 var number = null;
 
 
@@ -36,7 +36,7 @@ clear.addEventListener('click',initialize);
 
 function initialize()
 {
-     old_value = null;
+    old_value = null;
     new_value = null;
     old_operator = null;
     new_operator = null;
@@ -48,7 +48,6 @@ function initialize()
     number = null;
     result.innerHTML = 0;
 }
-
 
 function storeNumber()
 {  
@@ -69,10 +68,10 @@ function storeNumber()
 
 function operatorPerform()
 {
-    if(experssionEvaluated)
+    if(expressionEvaluated)
     {
-    old_operator = null;
-    experssionEvaluated = false;
+        old_operator = null;
+        expressionEvaluated = false;
     }
     if(isLastinputNumber)
     {
@@ -111,31 +110,38 @@ function operatorPerform()
 
 function calculate(operator,num1,num2)
 {
+    var scale1 = Math.floor(num1) == num1 ? 0 : num1.split('.')[1].length
+    var scale2 = Math.floor(num2) == num2 ? 0 : num2.split('.')[1].length 
+    var computedValue;
     switch(operator)
     {
+
         case '+': 
-            
-            return Number(num1) + Number(num2);
+            computedValue =  Number(num1) + Number(num2);
             break;
         case '-':
-            var scale1 = Math.floor(num1) == num1 ? 0 : num1.split('.')[1].length
-            var scale2 = Math.floor(num2) == num2 ? 0 : num2.split('.')[1].length 
-            return (Number(num1) - Number(num2)).toFixed(Math.max(scale1, scale2));
+            computedValue =  (Number(num1) - Number(num2));
             break;
         case '*':
-            return Number(num1) * Number(num2);
+            computedValue =  Number(num1) * Number(num2);
             break;
         case '/':
             if(Number(num2) != 0)
-            return  parseFloat(Number(num1) / Number(num2)).toFixed(8) ;
+            {
+                computedValue = Number(num1) / Number(num2); //1000000.2345
+                var number_of_digits = String(computedValue).split('.')[0].length
+                return (Number(num1) / Number(num2)).toFixed(10-number_of_digits);
+            }
             else
             {
-            initialize();
-            result.innerHTML = "undefined";
-            next;
+                initialize();
+                result.innerHTML = "undefined";
+                next;
             }
             break;    
     }
+    return computedValue.toFixed(Math.max(scale1, scale2)).toString();
+
 }
 
 function checkIfSameLevel(first_operator, second_operator)
@@ -176,7 +182,7 @@ function addDecimal()
 
 function evaluateExpression()
 {
-    experssionEvaluated = true;
+    expressionEvaluated = true;
     if(old_value != null)
     {
         if(new_operator)
@@ -242,15 +248,13 @@ function onOldOperator(value)
 
 function displayResult(value)
 {   
-    value = parseFloat(value)//.toFixed(4).replace(/\.0+$/,'');
-    // if(value % 1 !== 0)
-    var maximum_allowed_digits = value > 0 ? 10 : 11
+    value = parseFloat(value)
+    var maximum_allowed_digits = (value%1 == 0 && value > 0) ?  10 : 11
     value = String(value)
     if(value.length <= maximum_allowed_digits)
         result.innerHTML = Number.parseFloat(value);
     else
     {
-        // alert(value); 
         initialize()
         result.innerHTML = "Error";
     } 
